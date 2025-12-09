@@ -1,5 +1,6 @@
 package com.smalaca.taskamanager.api.rest;
 
+import com.smalaca.taskamanager.api.rest.project.ProjectService;
 import com.smalaca.taskamanager.dto.ProjectDto;
 import com.smalaca.taskamanager.exception.ProjectNotFoundException;
 import com.smalaca.taskamanager.exception.TeamNotFoundException;
@@ -22,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -40,20 +40,7 @@ public class ProjectController {
 
     @GetMapping
     public ResponseEntity<List<ProjectDto>> getAllProjects() {
-        List<ProjectDto> projectsDtos = new ArrayList<>();
-
-        for (Project project : projectRepository.findAll()) {
-            ProjectDto projectDto = new ProjectDto();
-            projectDto.setId(project.getId());
-            projectDto.setName(project.getName());
-            projectDto.setProjectStatus(project.getProjectStatus().name());
-
-            if (project.getProductOwner() != null) {
-                projectDto.setProductOwnerId(project.getProductOwner().getId());
-            }
-
-            projectsDtos.add(projectDto);
-        }
+        List<ProjectDto> projectsDtos = new ProjectService(projectRepository).findAllProject();
 
         return new ResponseEntity<>(projectsDtos, HttpStatus.OK);
     }

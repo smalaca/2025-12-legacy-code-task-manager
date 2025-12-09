@@ -1,5 +1,6 @@
 package com.smalaca.taskamanager.model.entities;
 
+import com.smalaca.taskamanager.dto.ProjectDto;
 import com.smalaca.taskamanager.model.enums.ProjectStatus;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -120,5 +121,21 @@ public class Project {
                 .append(id)
                 .append(name)
                 .toHashCode();
+    }
+
+    public ProjectDto asDto() {
+        ProjectDto projectDto = new ProjectDto();
+        projectDto.setId(id);
+        projectDto.setName(name);
+        projectDto.setProjectStatus(projectStatus.name());
+
+        if (hasProductOwner()) {
+            projectDto.setProductOwnerId(productOwner.getId());
+        }
+        return projectDto;
+    }
+
+    private boolean hasProductOwner() {
+        return productOwner != null;
     }
 }
