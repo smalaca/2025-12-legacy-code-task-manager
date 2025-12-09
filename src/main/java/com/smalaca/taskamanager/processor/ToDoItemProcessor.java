@@ -135,18 +135,24 @@ public class ToDoItemProcessor {
     }
 
     private void processReleased(ToDoItem toDoItem) {
+
+        String value = fooBar(toDoItem.getId());
+
         ToDoItemReleasedEvent event = createToDoItemReleasedEvent();
         event.setToDoItemId(toDoItem.getId());
         eventsRegistry.publish(event);
     }
 
+    // REQUIRED FOR KEEPING THE CLASS UNDER TESTS
     private boolean isUnderTest = false;
-    private ToDoItemReleasedEvent toDoItemReleasedEvent;
 
     @VisibleForTesting
     void setUnderTest(boolean underTest) {
         isUnderTest = underTest;
     }
+
+    // MOCKING NEWLY CREATED INSTANCE
+    private ToDoItemReleasedEvent toDoItemReleasedEvent;
 
     @VisibleForTesting
     void setToDoItemReleasedEvent(ToDoItemReleasedEvent toDoItemReleasedEvent) {
@@ -158,5 +164,20 @@ public class ToDoItemProcessor {
             return toDoItemReleasedEvent;
         }
         return new ToDoItemReleasedEvent();
+    }
+
+    // MOCKING STATIC CLASS INVOCATION
+    private String fooBarReturnValue;
+
+    @VisibleForTesting
+    void setFooBarReturnValue(String fooBarReturnValue) {
+        this.fooBarReturnValue = fooBarReturnValue;
+    }
+
+    private String fooBar(Long id) {
+        if (isUnderTest) {
+            return fooBarReturnValue;
+        }
+        return Foo.bar(id);
     }
 }
