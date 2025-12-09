@@ -1,6 +1,5 @@
 package com.smalaca.taskamanager.processor;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.smalaca.taskamanager.events.*;
 import com.smalaca.taskamanager.exception.UnsupportedToDoItemType;
 import com.smalaca.taskamanager.model.entities.Epic;
@@ -23,6 +22,7 @@ public class ToDoItemProcessor {
     private final ProjectBacklogService projectBacklogService;
     private final CommunicationService communicationService;
     private final SprintBacklogService sprintBacklogService;
+    private final ToDoItemReleasedProcessor toDoItemReleasedProcessor;
 
     public ToDoItemProcessor(
             StoryService storyService, EventsRegistry eventsRegistry, ProjectBacklogService projectBacklogService,
@@ -32,6 +32,7 @@ public class ToDoItemProcessor {
         this.projectBacklogService = projectBacklogService;
         this.communicationService = communicationService;
         this.sprintBacklogService = sprintBacklogService;
+        toDoItemReleasedProcessor = new ToDoItemReleasedProcessor(eventsRegistry);
     }
 
     public void processFor(ToDoItem toDoItem) {
@@ -53,7 +54,7 @@ public class ToDoItemProcessor {
                 break;
 
             case RELEASED:
-                processReleased(toDoItem);
+                toDoItemReleasedProcessor.process(toDoItem);
                 break;
 
             default:
@@ -132,52 +133,5 @@ public class ToDoItemProcessor {
                 storyService.attachPartialApprovalFor(task.getStory().getId(), task.getId());
             }
         }
-    }
-
-    private void processReleased(ToDoItem toDoItem) {
-
-        String value = fooBar(toDoItem.getId());
-
-        ToDoItemReleasedEvent event = createToDoItemReleasedEvent();
-        event.setToDoItemId(toDoItem.getId());
-        eventsRegistry.publish(event);
-    }
-
-    // REQUIRED FOR KEEPING THE CLASS UNDER TESTS
-    private boolean isUnderTest = false;
-
-    @VisibleForTesting
-    void setUnderTest(boolean underTest) {
-        isUnderTest = underTest;
-    }
-
-    // MOCKING NEWLY CREATED INSTANCE
-    private ToDoItemReleasedEvent toDoItemReleasedEvent;
-
-    @VisibleForTesting
-    void setToDoItemReleasedEvent(ToDoItemReleasedEvent toDoItemReleasedEvent) {
-        this.toDoItemReleasedEvent = toDoItemReleasedEvent;
-    }
-
-    private ToDoItemReleasedEvent createToDoItemReleasedEvent() {
-        if (isUnderTest) {
-            return toDoItemReleasedEvent;
-        }
-        return new ToDoItemReleasedEvent();
-    }
-
-    // MOCKING STATIC CLASS INVOCATION
-    private String fooBarReturnValue;
-
-    @VisibleForTesting
-    void setFooBarReturnValue(String fooBarReturnValue) {
-        this.fooBarReturnValue = fooBarReturnValue;
-    }
-
-    private String fooBar(Long id) {
-        if (isUnderTest) {
-            return fooBarReturnValue;
-        }
-        return Foo.bar(id);
     }
 }
