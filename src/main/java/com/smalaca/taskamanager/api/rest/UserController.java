@@ -172,10 +172,8 @@ public class UserController {
             user.setEmailAddress(emailAddress);
         }
 
-        if (userDto.getTeamRole() != null) {
-            user.setTeamRole(TeamRole.valueOf(userDto.getTeamRole()));
-        }
-        
+        updateTeamRoleIfSupported(userDto, user);
+
         User updated = userRepository.save(user);
 
         UserDto response = new UserDto();
@@ -202,6 +200,13 @@ public class UserController {
         }
 
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @VisibleForTesting
+    void updateTeamRoleIfSupported(UserDto userDto, User user) {
+        if (TeamRole.isSupported(userDto.getTeamRole())) {
+            user.setTeamRole(TeamRole.valueOf(userDto.getTeamRole()));
+        }
     }
 
     @DeleteMapping(value = "/{id}")

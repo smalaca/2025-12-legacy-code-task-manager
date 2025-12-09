@@ -59,4 +59,30 @@ class UserControllerWorkshopTest {
         assertThat(user.getPassword()).isEqualTo(String.valueOf(password.hashCode()));
         assertThat(user.getPassword()).isNotEqualTo(password);
     }
+
+    @ParameterizedTest
+    @NullSource
+    @EmptySource
+    @ValueSource(strings = {"INVALID", "developer", "D3veloper", "Coder"})
+    void shouldNotUpdateUserTeamRoleWhenInvalidGiven(String invalidaTeamRole) {
+        UserDto userDto = new UserDto();
+        userDto.setTeamRole(invalidaTeamRole);
+        User user = new User();
+
+        userController.updateTeamRoleIfSupported(userDto, user);
+
+        assertThat(user.getTeamRole()).isNull();
+    }
+
+    @ParameterizedTest
+    @EnumSource(TeamRole.class)
+    void shouldNotUpdateUserTeamRole(TeamRole teamRole) {
+        UserDto userDto = new UserDto();
+        userDto.setTeamRole(teamRole.name());
+        User user = new User();
+
+        userController.updateTeamRoleIfSupported(userDto, user);
+
+        assertThat(user.getTeamRole()).isEqualTo(teamRole);
+    }
 }
