@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -171,6 +172,7 @@ public class UserController {
 
         updateEmailAddressWhenValid(userDto, user);
         updateTeamRoleIfSupported(userDto, user);
+        updateUserModificationTime(user);
 
         User updated = userRepository.save(user);
 
@@ -198,6 +200,11 @@ public class UserController {
         }
 
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @VisibleForTesting
+    void updateUserModificationTime(User user) {
+        user.setModifiedAt(LocalDateTime.now());
     }
 
     @VisibleForTesting

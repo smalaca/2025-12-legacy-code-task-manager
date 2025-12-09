@@ -7,13 +7,8 @@ import com.smalaca.taskamanager.model.enums.TeamRole;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +20,7 @@ public class User {
     private Long id;
     private String login;
     private String password;
+    private LocalDateTime modifiedAt;
 
     @Embedded
     private UserName userName;
@@ -40,6 +36,14 @@ public class User {
 
     @OneToMany
     private List<Team> teams = new ArrayList<>();
+
+    public void setModifiedAt(LocalDateTime modifiedAt) {
+        this.modifiedAt = modifiedAt;
+    }
+
+    public LocalDateTime getModifiedAt() {
+        return modifiedAt;
+    }
 
     public UserName getUserName() {
         return userName;

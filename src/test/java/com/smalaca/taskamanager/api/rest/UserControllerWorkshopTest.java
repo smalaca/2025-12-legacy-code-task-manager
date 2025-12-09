@@ -11,6 +11,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static com.smalaca.taskamanager.model.enums.TeamRole.UNDEFINED;
@@ -110,5 +111,17 @@ class UserControllerWorkshopTest {
         userController.updateEmailAddressWhenValid(userDto, user);
 
         assertThat(user.getEmailAddress().getEmailAddress()).isEqualTo(correctEmailAddress);
+    }
+
+    @Test
+    void shouldUpdateUserModificationTime() {
+        User user = new User();
+        LocalDateTime past = LocalDateTime.now().minusSeconds(1);
+
+        userController.updateUserModificationTime(user);
+
+        assertThat(user.getModifiedAt())
+                .isAfter(past)
+                .isBefore(LocalDateTime.now().plusSeconds(1));
     }
 }
