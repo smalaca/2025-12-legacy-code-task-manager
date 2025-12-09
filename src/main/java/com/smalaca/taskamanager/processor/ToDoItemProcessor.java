@@ -1,10 +1,7 @@
 package com.smalaca.taskamanager.processor;
 
-import com.smalaca.taskamanager.events.EpicReadyToPrioritize;
-import com.smalaca.taskamanager.events.StoryApprovedEvent;
-import com.smalaca.taskamanager.events.StoryDoneEvent;
-import com.smalaca.taskamanager.events.TaskApprovedEvent;
-import com.smalaca.taskamanager.events.ToDoItemReleasedEvent;
+import com.google.common.annotations.VisibleForTesting;
+import com.smalaca.taskamanager.events.*;
 import com.smalaca.taskamanager.exception.UnsupportedToDoItemType;
 import com.smalaca.taskamanager.model.entities.Epic;
 import com.smalaca.taskamanager.model.entities.Story;
@@ -138,8 +135,28 @@ public class ToDoItemProcessor {
     }
 
     private void processReleased(ToDoItem toDoItem) {
-        ToDoItemReleasedEvent event = new ToDoItemReleasedEvent();
+        ToDoItemReleasedEvent event = createToDoItemReleasedEvent();
         event.setToDoItemId(toDoItem.getId());
         eventsRegistry.publish(event);
+    }
+
+    private boolean isUnderTest = false;
+    private ToDoItemReleasedEvent toDoItemReleasedEvent;
+
+    @VisibleForTesting
+    void setUnderTest(boolean underTest) {
+        isUnderTest = underTest;
+    }
+
+    @VisibleForTesting
+    void setToDoItemReleasedEvent(ToDoItemReleasedEvent toDoItemReleasedEvent) {
+        this.toDoItemReleasedEvent = toDoItemReleasedEvent;
+    }
+
+    private ToDoItemReleasedEvent createToDoItemReleasedEvent() {
+        if (isUnderTest) {
+            return toDoItemReleasedEvent;
+        }
+        return new ToDoItemReleasedEvent();
     }
 }
