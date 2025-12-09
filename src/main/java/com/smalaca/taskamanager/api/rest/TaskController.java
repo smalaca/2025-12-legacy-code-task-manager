@@ -62,9 +62,9 @@ public class TaskController {
     }
 
     @Transactional
-    @GetMapping("/{id}")
-    public ResponseEntity<TaskDto> findById(@PathVariable Long id) {
-        Optional<Task> found = taskRepository.findById(id);
+    @GetMapping("/{taskId}")
+    public ResponseEntity<TaskDto> findById(@PathVariable Long taskId) {
+        Optional<Task> found = taskRepository.findById(taskId);
 
         if (found.isPresent()) {
             Task task = found.get();
