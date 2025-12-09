@@ -51,7 +51,9 @@ class ToDoItemProcessorWorkshopTest {
 //        inOrder.verify(task).getId();
 //        inOrder.verify(toDoItemReleasedEvent).setToDoItemId(42L);
 //        inOrder.verify(eventsRegistry).publish(toDoItemReleasedEvent);
-//        inOrder.verifyNoMoreInteractions();
+//        verifyNoMoreInteractions(
+//                task, toDoItemReleasedEvent, storyService, eventsRegistry, projectBacklogService,
+//                communicationService, sprintBacklogService);
 //    }
 //
 //    @Test
@@ -71,7 +73,9 @@ class ToDoItemProcessorWorkshopTest {
 //        inOrder.verify(story).getId();
 //        inOrder.verify(toDoItemReleasedEvent).setToDoItemId(42L);
 //        inOrder.verify(eventsRegistry).publish(toDoItemReleasedEvent);
-//        inOrder.verifyNoMoreInteractions();
+//        verifyNoMoreInteractions(
+//                story, toDoItemReleasedEvent, storyService, eventsRegistry, projectBacklogService,
+//                communicationService, sprintBacklogService);
 //    }
 //
 //    @Test
@@ -91,6 +95,8 @@ class ToDoItemProcessorWorkshopTest {
 //        inOrder.verify(epic).getId();
 //        inOrder.verify(toDoItemReleasedEvent).setToDoItemId(42L);
 //        inOrder.verify(eventsRegistry).publish(toDoItemReleasedEvent);
-//        inOrder.verifyNoMoreInteractions();
+//        verifyNoMoreInteractions(
+//                epic, toDoItemReleasedEvent, storyService, eventsRegistry, projectBacklogService,
+//                communicationService, sprintBacklogService);
 //    }
 }
