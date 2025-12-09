@@ -4,11 +4,14 @@ import com.smalaca.taskamanager.dto.UserDto;
 import com.smalaca.taskamanager.model.entities.User;
 import com.smalaca.taskamanager.model.enums.TeamRole;
 import com.smalaca.taskamanager.repository.UserRepository;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EmptySource;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
+
+import java.util.UUID;
 
 import static com.smalaca.taskamanager.model.enums.TeamRole.UNDEFINED;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -42,5 +45,18 @@ class UserControllerWorkshopTest {
         userController.updateUserTeamRole(userDto, user);
 
         assertThat(user.getTeamRole()).isEqualTo(teamRole);
+    }
+
+    @Test
+    void shouldCreateUserWithHashedPassword() {
+        UserDto userDto = new UserDto();
+        String password = UUID.randomUUID().toString();
+        userDto.setPassword(password);
+        User user = new User();
+
+        userController.updatePassword(userDto, user);
+
+        assertThat(user.getPassword()).isEqualTo(String.valueOf(password.hashCode()));
+        assertThat(user.getPassword()).isNotEqualTo(password);
     }
 }

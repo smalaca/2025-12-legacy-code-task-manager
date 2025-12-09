@@ -111,7 +111,7 @@ public class UserController {
             userName.setLastName(userDto.getLastName());
             user.setUserName(userName);
             user.setLogin(userDto.getLogin());
-            user.setPassword(userDto.getPassword());
+            updatePassword(userDto, user);
 
             User saved = userRepository.save(user);
 
@@ -119,6 +119,13 @@ public class UserController {
             headers.setLocation(uriComponentsBuilder.path("/user/{id}").buildAndExpand(saved.getId()).toUri());
             return new ResponseEntity<>(headers, HttpStatus.CREATED);
         }
+    }
+
+    @VisibleForTesting
+    void updatePassword(UserDto userDto, User user) {
+        String password = userDto.getPassword();
+        String hashedPassword = String.valueOf(password.hashCode());
+        user.setPassword(hashedPassword);
     }
 
     @VisibleForTesting
