@@ -85,4 +85,89 @@ class ProjectControllerWorkshopTest {
         BDDMockito.then(projectRepository).should().save(projectCaptor.capture());
         Assertions.assertThat(projectCaptor.getValue().getName()).isEqualTo(correctProjectName);
     }
+
+    @Test
+    void shouldReturnHttpStatusBadRequestWhenProjectNameIncorrect_BlockTest() {
+        Project saved = new Project();
+        saved.setId(13L);
+        String incorrectProjectName = "inco";
+        BDDMockito.given(projectRepository.save(Mockito.any())).willReturn(saved);
+        UriComponentsBuilder uriComponentsBuilder = fromUriString("/");
+        ProjectDto projectDto = new ProjectDto();
+        projectDto.setName(incorrectProjectName);
+
+        ResponseEntity<Void> actual = projectController.createNewProject(projectDto, uriComponentsBuilder);
+
+        Assertions.assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    void shouldNotCreateProjectWhenProjectNameIncorrect_BlockTest() {
+        String incorrectProjectName = "inco";
+        UriComponentsBuilder uriComponentsBuilder = fromUriString("/");
+        ProjectDto projectDto = new ProjectDto();
+        projectDto.setName(incorrectProjectName);
+
+        projectController.createNewProject(projectDto, uriComponentsBuilder);
+
+        BDDMockito.then(projectRepository).should(Mockito.never()).save(Mockito.any());
+    }
+
+    @Test
+    void shouldReturnHttpStatusCreatedWhenProjectNameCorrect_BlockTest() {
+        Project saved = new Project();
+        saved.setId(13L);
+        String correctProjectName = "legacy rearch";
+        BDDMockito.given(projectRepository.save(Mockito.any())).willReturn(saved);
+        UriComponentsBuilder uriComponentsBuilder = fromUriString("/");
+        ProjectDto projectDto = new ProjectDto();
+        projectDto.setName(correctProjectName);
+
+        ResponseEntity<Void> actual = projectController.createNewProject(projectDto, uriComponentsBuilder);
+
+        Assertions.assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+    }
+
+    @Test
+    void shouldCreateProjectWhenProjectNameCorrect_BlockTest() {
+        Project saved = new Project();
+        saved.setId(13L);
+        String correctProjectName = "legacy rearch";
+        BDDMockito.given(projectRepository.save(Mockito.any())).willReturn(saved);
+        UriComponentsBuilder uriComponentsBuilder = fromUriString("/");
+        ProjectDto projectDto = new ProjectDto();
+        projectDto.setName(correctProjectName);
+
+        projectController.createNewProject(projectDto, uriComponentsBuilder);
+
+        ArgumentCaptor<Project> projectCaptor = ArgumentCaptor.forClass(Project.class);
+        BDDMockito.then(projectRepository).should().save(projectCaptor.capture());
+        Assertions.assertThat(projectCaptor.getValue().getName()).isEqualTo(correctProjectName);
+    }
+
+    @Test
+    void shouldNotUpdateNameWhenIncorrect() {
+        Project created = new Project();
+        String correctProjectName = "legacy rearch";
+        ProjectDto projectDto = new ProjectDto();
+        projectDto.setName(correctProjectName);
+
+        boolean actual = projectController.updateIfNameIsValid(projectDto, created);
+
+        Assertions.assertThat(actual).isTrue();
+        Assertions.assertThat(created.getName()).isEqualTo(correctProjectName);
+    }
+
+    @Test
+    void shouldNotUpdateNameWhenCorrect() {
+        Project created = new Project();
+        String correctProjectName = "icr";
+        ProjectDto projectDto = new ProjectDto();
+        projectDto.setName(correctProjectName);
+
+        boolean actual = projectController.updateIfNameIsValid(projectDto, created);
+
+        Assertions.assertThat(actual).isFalse();
+        Assertions.assertThat(created.getName()).isNull();
+    }
 }

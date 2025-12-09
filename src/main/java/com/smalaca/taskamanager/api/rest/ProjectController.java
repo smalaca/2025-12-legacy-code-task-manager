@@ -1,5 +1,6 @@
 package com.smalaca.taskamanager.api.rest;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.smalaca.taskamanager.api.rest.project.ProjectService;
 import com.smalaca.taskamanager.dto.ProjectDto;
 import com.smalaca.taskamanager.exception.ProjectNotFoundException;
@@ -72,20 +73,36 @@ public class ProjectController {
         if (exists(projectDto)) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         } else {
-            Project project = new Project();
-
-            if (projectDto.getName().length() < 5) {
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            }
-
-            project.setName(projectDto.getName());
-
-            Project saved = projectRepository.save(project);
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.setLocation(uriComponentsBuilder.path("/project/{id}").buildAndExpand(saved.getId()).toUri());
-            return new ResponseEntity<>(headers, HttpStatus.CREATED);
+            return createNewProject(projectDto, uriComponentsBuilder);
         }
+    }
+
+    @VisibleForTesting
+    public ResponseEntity<Void> createNewProject(ProjectDto projectDto, UriComponentsBuilder uriComponentsBuilder) {
+        Project project = new Project();
+
+        boolean isValidName = updateIfNameIsValid(projectDto, project);
+
+        if (!isValidName) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        Project saved = projectRepository.save(project);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(uriComponentsBuilder.path("/project/{id}").buildAndExpand(saved.getId()).toUri());
+        return new ResponseEntity<>(headers, HttpStatus.CREATED);
+    }
+
+    @VisibleForTesting
+    public boolean updateIfNameIsValid(ProjectDto projectDto, Project project) {
+        boolean isValidName = projectDto.getName().length() >= 5;
+
+        if (isValidName) {
+            project.setName(projectDto.getName());
+        }
+
+        return isValidName;
     }
 
     private boolean exists(ProjectDto projectDto) {
