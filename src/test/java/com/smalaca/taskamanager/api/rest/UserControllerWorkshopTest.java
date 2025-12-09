@@ -76,7 +76,7 @@ class UserControllerWorkshopTest {
 
     @ParameterizedTest
     @EnumSource(TeamRole.class)
-    void shouldNotUpdateUserTeamRole(TeamRole teamRole) {
+    void shouldUpdateUserTeamRole(TeamRole teamRole) {
         UserDto userDto = new UserDto();
         userDto.setTeamRole(teamRole.name());
         User user = new User();
@@ -84,5 +84,31 @@ class UserControllerWorkshopTest {
         userController.updateTeamRoleIfSupported(userDto, user);
 
         assertThat(user.getTeamRole()).isEqualTo(teamRole);
+    }
+
+    @ParameterizedTest
+    @EmptySource
+    @NullSource
+    @ValueSource(strings = {"wrongmail.com", "invalid.mail", "broken one"})
+    void shouldNotUpdateUserEmailWhenInvalidGiven(String invalidaEmailAddress) {
+        UserDto userDto = new UserDto();
+        userDto.setEmailAddress(invalidaEmailAddress);
+        User user = new User();
+
+        userController.updateEmailAddressWhenValid(userDto, user);
+
+        assertThat(user.getEmailAddress()).isNull();
+    }
+
+    @Test
+    void shouldUpdateUserEmailAddress() {
+        UserDto userDto = new UserDto();
+        String correctEmailAddress = "some@mail.address";
+        userDto.setEmailAddress(correctEmailAddress);
+        User user = new User();
+
+        userController.updateEmailAddressWhenValid(userDto, user);
+
+        assertThat(user.getEmailAddress().getEmailAddress()).isEqualTo(correctEmailAddress);
     }
 }

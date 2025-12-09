@@ -2,6 +2,7 @@ package com.smalaca.taskamanager.api.rest;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.smalaca.taskamanager.dto.UserDto;
+import com.smalaca.taskamanager.email.EmailAddressValidator;
 import com.smalaca.taskamanager.exception.UserNotFoundException;
 import com.smalaca.taskamanager.model.embedded.EmailAddress;
 import com.smalaca.taskamanager.model.embedded.PhoneNumber;
@@ -25,10 +26,12 @@ import java.util.Optional;
 @SuppressWarnings("checkstyle:ClassFanOutComplexity")
 public class UserController {
     private final UserRepository userRepository;
+    private final EmailAddressValidator emailAddressValidator;
 
     @Autowired
     public UserController(UserRepository userRepository) {
         this.userRepository = userRepository;
+        emailAddressValidator = new EmailAddressValidator();
     }
 
     @GetMapping
@@ -166,12 +169,7 @@ public class UserController {
             user.setPhoneNumber(phoneNumber);
         }
 
-        if (userDto.getEmailAddress() != null) {
-            EmailAddress emailAddress = new EmailAddress();
-            emailAddress.setEmailAddress(userDto.getEmailAddress());
-            user.setEmailAddress(emailAddress);
-        }
-
+        updateEmailAddressWhenValid(userDto, user);
         updateTeamRoleIfSupported(userDto, user);
 
         User updated = userRepository.save(user);
@@ -200,6 +198,15 @@ public class UserController {
         }
 
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @VisibleForTesting
+    void updateEmailAddressWhenValid(UserDto userDto, User user) {
+        if (emailAddressValidator.isValid(userDto.getEmailAddress())) {
+            EmailAddress emailAddress = new EmailAddress();
+            emailAddress.setEmailAddress(userDto.getEmailAddress());
+            user.setEmailAddress(emailAddress);
+        }
     }
 
     @VisibleForTesting
