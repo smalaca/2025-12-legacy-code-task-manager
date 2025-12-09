@@ -1,15 +1,12 @@
 package com.smalaca.taskamanager.model.entities;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.smalaca.taskamanager.dto.ProjectDto;
 import com.smalaca.taskamanager.model.enums.ProjectStatus;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -137,5 +134,10 @@ public class Project {
 
     private boolean hasProductOwner() {
         return productOwner != null;
+    }
+
+    @VisibleForTesting
+    public void setId(Long id) {
+        this.id = id;
     }
 }
