@@ -78,7 +78,7 @@ public class ProjectController {
     }
 
     @VisibleForTesting
-    public ResponseEntity<Void> createNewProject(ProjectDto projectDto, UriComponentsBuilder uriComponentsBuilder) {
+    ResponseEntity<Void> createNewProject(ProjectDto projectDto, UriComponentsBuilder uriComponentsBuilder) {
         Project project = new Project();
 
         boolean isValidName = updateIfNameIsValid(projectDto, project);
@@ -95,7 +95,7 @@ public class ProjectController {
     }
 
     @VisibleForTesting
-    public boolean updateIfNameIsValid(ProjectDto projectDto, Project project) {
+    boolean updateIfNameIsValid(ProjectDto projectDto, Project project) {
         boolean isValidName = projectDto.getName().length() >= 5;
 
         if (isValidName) {
