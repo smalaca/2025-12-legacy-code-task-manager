@@ -13,7 +13,7 @@ public class ProjectService {
         this.projectRepository = projectRepository;
     }
 
-    public List<ProjectDto> findAllProject() {
+    public List<ProjectDto> findAll() {
         List<ProjectDto> projectsDtos = new ArrayList<>();
 
         projectRepository.findAll()

@@ -1,7 +1,6 @@
 package com.smalaca.taskamanager.api.rest;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.smalaca.taskmanager.projectmanagement.business.ProjectService;
 import com.smalaca.taskamanager.dto.ProjectDto;
 import com.smalaca.taskamanager.exception.ProjectNotFoundException;
 import com.smalaca.taskamanager.exception.TeamNotFoundException;
@@ -10,6 +9,8 @@ import com.smalaca.taskamanager.model.entities.Team;
 import com.smalaca.taskamanager.model.enums.ProjectStatus;
 import com.smalaca.taskamanager.repository.ProjectRepository;
 import com.smalaca.taskamanager.repository.TeamRepository;
+import com.smalaca.taskmanager.projectmanagement.presentation.api.ProjectManagementClient;
+import com.smalaca.taskmanager.projectmanagement.presentation.api.ProjectManagementClientFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,17 +27,17 @@ import java.util.stream.Collectors;
 public class ProjectController {
     private final ProjectRepository projectRepository;
     private final TeamRepository teamRepository;
-    private final ProjectService projectService;
+    private final ProjectManagementClient projectManagementClient;
 
     public ProjectController(ProjectRepository projectRepository, TeamRepository teamRepository) {
         this.projectRepository = projectRepository;
         this.teamRepository = teamRepository;
-        projectService = new ProjectService(projectRepository);
+        projectManagementClient = new ProjectManagementClientFactory().create(projectRepository);
     }
 
     @GetMapping
     public ResponseEntity<List<ProjectDto>> getAllProjects() {
-        List<ProjectDto> projectsDtos = projectService.findAllProject();
+        List<ProjectDto> projectsDtos = projectManagementClient.findAllProjects();
 
         return new ResponseEntity<>(projectsDtos, HttpStatus.OK);
     }
