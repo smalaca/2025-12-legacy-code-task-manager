@@ -1,5 +1,6 @@
 package com.smalaca.taskamanager.api.rest;
 
+import com.smalaca.acl.legacycode.AclUserManagementClient;
 import com.smalaca.taskamanager.dto.ProductOwnerDto;
 import com.smalaca.taskamanager.exception.ProductOwnerNotFoundException;
 import com.smalaca.taskamanager.model.embedded.EmailAddress;
@@ -8,7 +9,6 @@ import com.smalaca.taskamanager.model.entities.ProductOwner;
 import com.smalaca.taskamanager.model.entities.Project;
 import com.smalaca.taskamanager.repository.ProductOwnerRepository;
 import com.smalaca.taskamanager.repository.ProjectRepository;
-import com.smalaca.taskmanager.usermanagement.domain.productowner.ProductOwnerView;
 import com.smalaca.taskmanager.usermanagement.ports.primiary.api.UserManagementClient;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -25,37 +25,24 @@ import java.util.Optional;
 public class ProductOwnerController {
     private final ProductOwnerRepository productOwnerRepository;
     private final ProjectRepository projectRepository;
-    private final UserManagementClient userManagementClient;
+    private final AclUserManagementClient aclUserManagementClient;
 
     public ProductOwnerController(ProductOwnerRepository productOwnerRepository, ProjectRepository projectRepository) {
         this.productOwnerRepository = productOwnerRepository;
         this.projectRepository = projectRepository;
-        userManagementClient = new UserManagementClient(productOwnerRepository);
+        aclUserManagementClient = new AclUserManagementClient(new UserManagementClient(productOwnerRepository));
     }
 
     @GetMapping("/{id}")
     @Transactional
     public ResponseEntity<ProductOwnerDto> findById(@PathVariable Long id) {
         try {
-            ProductOwnerView view = userManagementClient.findProductOwnerById(id);
-            ProductOwnerDto dto = asDto(view);
+            ProductOwnerDto dto = aclUserManagementClient.findProductOwnerById(id);
 
             return new ResponseEntity<>(dto, HttpStatus.OK);
         } catch (ProductOwnerNotFoundException exception) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-    }
-
-    private ProductOwnerDto asDto(ProductOwnerView view) {
-        ProductOwnerDto productOwnerDto = new ProductOwnerDto();
-        productOwnerDto.setId(view.getId());
-        productOwnerDto.setFirstName(view.getFirstName());
-        productOwnerDto.setLastName(view.getLastName());
-        productOwnerDto.setEmailAddress(view.getEmailAddress());
-        productOwnerDto.setPhonePrefix(view.getPhonePrefix());
-        productOwnerDto.setPhoneNumber(view.getPhoneNumber());
-        productOwnerDto.setProjectIds(view.getProjectIds());
-        return productOwnerDto;
     }
 
     @PostMapping
