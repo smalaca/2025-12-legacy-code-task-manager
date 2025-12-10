@@ -1,4 +1,4 @@
-package com.smalaca.taskamanager.api.rest.project;
+package com.smalaca.taskmanager.projectmanagement.business;
 
 import com.smalaca.taskamanager.dto.ProjectDto;
 import com.smalaca.taskamanager.repository.ProjectRepository;

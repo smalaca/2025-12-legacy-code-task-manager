@@ -1,7 +1,7 @@
 package com.smalaca.taskamanager.api.rest;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.smalaca.taskamanager.api.rest.project.ProjectService;
+import com.smalaca.taskmanager.projectmanagement.business.ProjectService;
 import com.smalaca.taskamanager.dto.ProjectDto;
 import com.smalaca.taskamanager.exception.ProjectNotFoundException;
 import com.smalaca.taskamanager.exception.TeamNotFoundException;
@@ -26,15 +26,17 @@ import java.util.stream.Collectors;
 public class ProjectController {
     private final ProjectRepository projectRepository;
     private final TeamRepository teamRepository;
+    private final ProjectService projectService;
 
     public ProjectController(ProjectRepository projectRepository, TeamRepository teamRepository) {
         this.projectRepository = projectRepository;
         this.teamRepository = teamRepository;
+        projectService = new ProjectService(projectRepository);
     }
 
     @GetMapping
     public ResponseEntity<List<ProjectDto>> getAllProjects() {
-        List<ProjectDto> projectsDtos = new ProjectService(projectRepository).findAllProject();
+        List<ProjectDto> projectsDtos = projectService.findAllProject();
 
         return new ResponseEntity<>(projectsDtos, HttpStatus.OK);
     }
