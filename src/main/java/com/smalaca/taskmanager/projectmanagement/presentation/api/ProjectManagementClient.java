@@ -22,7 +22,7 @@ public class ProjectManagementClient {
         return projectService.createProject(projectDto);
     }
 
-    public ProjectDto updateProject(Long id, ProjectDto projectDto) {
+    public ProjectView updateProject(Long id, ProjectDto projectDto) {
         return projectService.updateProject(id, projectDto);
     }
 }

@@ -25,16 +25,6 @@ public class ProjectService {
         return projectsDtos;
     }
 
-    private ProjectView asView(ProjectDto dto) {
-        ProjectView projectView = new ProjectView();
-        projectView.setId(dto.getId());
-        projectView.setName(dto.getName());
-        projectView.setProjectStatus(dto.getProjectStatus());
-        projectView.setProductOwnerId(dto.getProductOwnerId());
-        projectView.setTeamIds(dto.getTeamIds());
-        return projectView;
-    }
-
     public CreateProjectResponse createProject(ProjectDto projectDto) {
         boolean exists = projectRepository.findByName(projectDto.getName()).isPresent();
         CreateProjectResponse response = new CreateProjectResponse();
@@ -59,24 +49,26 @@ public class ProjectService {
         return response;
     }
 
-    public ProjectDto updateProject(Long id, ProjectDto projectDto) {
+    public ProjectView updateProject(Long id, ProjectDto projectDto) {
         Project project = getProjectById(id);
         project.setProjectStatus(ProjectStatus.valueOf(projectDto.getProjectStatus()));
 
         Project updated = projectRepository.save(project);
 
-        ProjectDto response = new ProjectDto();
-        response.setId(updated.getId());
-        response.setName(updated.getName());
-        response.setProjectStatus(updated.getProjectStatus().name());
-
-        if (updated.getProductOwner() != null) {
-            response.setProductOwnerId(updated.getProductOwner().getId());
-        }
-        return response;
+        return asView(updated.asDto());
     }
 
     private Project getProjectById(Long id) {
         return projectRepository.findById(id).orElseThrow(ProjectNotFoundException::new);
+    }
+
+    private ProjectView asView(ProjectDto dto) {
+        ProjectView projectView = new ProjectView();
+        projectView.setId(dto.getId());
+        projectView.setName(dto.getName());
+        projectView.setProjectStatus(dto.getProjectStatus());
+        projectView.setProductOwnerId(dto.getProductOwnerId());
+        projectView.setTeamIds(dto.getTeamIds());
+        return projectView;
     }
 }

@@ -33,6 +33,14 @@ public class AclProjectManagementClient {
                 .collect(toList());
     }
 
+    public CreateProjectResponse createProject(ProjectDto projectDto) {
+        return projectManagementClient.createProject(projectDto);
+    }
+
+    public ProjectDto updateProject(Long id, ProjectDto projectDto) {
+        return asDto(projectManagementClient.updateProject(id, projectDto));
+    }
+
     private ProjectDto asDto(ProjectView projectView) {
         ProjectDto projectDto = new ProjectDto();
         projectDto.setId(projectView.getId());
@@ -41,13 +49,5 @@ public class AclProjectManagementClient {
         projectDto.setProductOwnerId(projectView.getProductOwnerId());
         projectDto.setTeamIds(projectView.getTeamIds());
         return projectDto;
-    }
-
-    public CreateProjectResponse createProject(ProjectDto projectDto) {
-        return projectManagementClient.createProject(projectDto);
-    }
-
-    public ProjectDto updateProject(Long id, ProjectDto projectDto) {
-        return projectManagementClient.updateProject(id, projectDto);
     }
 }
