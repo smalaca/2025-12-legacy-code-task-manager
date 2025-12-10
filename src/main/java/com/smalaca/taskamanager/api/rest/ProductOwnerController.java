@@ -8,23 +8,15 @@ import com.smalaca.taskamanager.model.entities.ProductOwner;
 import com.smalaca.taskamanager.model.entities.Project;
 import com.smalaca.taskamanager.repository.ProductOwnerRepository;
 import com.smalaca.taskamanager.repository.ProjectRepository;
+import com.smalaca.taskmanager.usermanagement.ports.primiary.api.UserManagementClient;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Optional;
-
-import static java.util.stream.Collectors.toList;
 
 @RestController
 @RequestMapping("/product-owner")
@@ -32,32 +24,19 @@ import static java.util.stream.Collectors.toList;
 public class ProductOwnerController {
     private final ProductOwnerRepository productOwnerRepository;
     private final ProjectRepository projectRepository;
+    private final UserManagementClient userManagementClient;
 
     public ProductOwnerController(ProductOwnerRepository productOwnerRepository, ProjectRepository projectRepository) {
         this.productOwnerRepository = productOwnerRepository;
         this.projectRepository = projectRepository;
+        userManagementClient = new UserManagementClient(productOwnerRepository);
     }
 
     @GetMapping("/{id}")
     @Transactional
     public ResponseEntity<ProductOwnerDto> findById(@PathVariable Long id) {
         try {
-            ProductOwner productOwner = getProductOwnerById(id);
-            ProductOwnerDto dto = new ProductOwnerDto();
-            dto.setId(productOwner.getId());
-            dto.setFirstName(productOwner.getFirstName());
-            dto.setLastName(productOwner.getLastName());
-
-            if (productOwner.getPhoneNumber() != null) {
-                dto.setPhonePrefix(productOwner.getPhoneNumber().getPrefix());
-                dto.setPhoneNumber(productOwner.getPhoneNumber().getNumber());
-            }
-
-            if (productOwner.getEmailAddress() != null) {
-                dto.setEmailAddress(productOwner.getEmailAddress().getEmailAddress());
-            }
-            
-            dto.setProjectIds(productOwner.getProjects().stream().map(Project::getId).collect(toList()));
+            ProductOwnerDto dto = userManagementClient.findProductOwnerById(id);
 
             return new ResponseEntity<>(dto, HttpStatus.OK);
         } catch (ProductOwnerNotFoundException exception) {
