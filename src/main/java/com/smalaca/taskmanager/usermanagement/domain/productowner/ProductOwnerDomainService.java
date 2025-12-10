@@ -9,13 +9,21 @@ import java.util.stream.Collectors;
 
 public class ProductOwnerDomainService {
     private final ProductOwnerRepository productOwnerRepository;
+    private final ProductOwnerDomainRepository productOwnerDomainRepository;
 
-    public ProductOwnerDomainService(ProductOwnerRepository productOwnerRepository) {
+    public ProductOwnerDomainService(ProductOwnerRepository productOwnerRepository, ProductOwnerDomainRepository productOwnerDomainRepository) {
         this.productOwnerRepository = productOwnerRepository;
+        this.productOwnerDomainRepository = productOwnerDomainRepository;
     }
 
     public ProductOwnerView findById(Long id) {
         ProductOwner legacy = getProductOwnerById(id);
+        ProductOwnerDomainModel productOwner = asProductOwnerDomainModel(legacy);
+
+        return productOwner.asView();
+    }
+
+    private ProductOwnerDomainModel asProductOwnerDomainModel(ProductOwner legacy) {
         String phonePrefix = null;
         String phoneNumber = null;
         String emailAddress = null;
@@ -28,12 +36,10 @@ public class ProductOwnerDomainService {
             emailAddress = legacy.getEmailAddress().getEmailAddress();
         }
 
-
         ProductOwnerDomainModel productOwner = new ProductOwnerDomainModel(
                 legacy.getId(), legacy.getFirstName(), legacy.getLastName(), legacy.getProjects().stream().map(Project::getId).collect(Collectors.toList()),
                 phoneNumber, phonePrefix, emailAddress);
-
-        return productOwner.asView();
+        return productOwner;
     }
 
     private ProductOwner getProductOwnerById(Long id) {

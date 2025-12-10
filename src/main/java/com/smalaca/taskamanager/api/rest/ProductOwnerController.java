@@ -1,6 +1,7 @@
 package com.smalaca.taskamanager.api.rest;
 
 import com.smalaca.acl.legacycode.AclUserManagementClient;
+import com.smalaca.acl.usermanagement.AclProductOwnerDomainRepository;
 import com.smalaca.taskamanager.dto.ProductOwnerDto;
 import com.smalaca.taskamanager.exception.ProductOwnerNotFoundException;
 import com.smalaca.taskamanager.model.embedded.EmailAddress;
@@ -30,7 +31,8 @@ public class ProductOwnerController {
     public ProductOwnerController(ProductOwnerRepository productOwnerRepository, ProjectRepository projectRepository) {
         this.productOwnerRepository = productOwnerRepository;
         this.projectRepository = projectRepository;
-        aclUserManagementClient = new AclUserManagementClient(new UserManagementClient(productOwnerRepository));
+        aclUserManagementClient = new AclUserManagementClient(
+                new UserManagementClient(productOwnerRepository, new AclProductOwnerDomainRepository(productOwnerRepository)));
     }
 
     @GetMapping("/{id}")
