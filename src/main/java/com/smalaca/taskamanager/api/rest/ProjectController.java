@@ -1,6 +1,5 @@
 package com.smalaca.taskamanager.api.rest;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.smalaca.taskamanager.dto.ProjectDto;
 import com.smalaca.taskamanager.exception.ProjectNotFoundException;
 import com.smalaca.taskamanager.exception.TeamNotFoundException;
@@ -9,6 +8,7 @@ import com.smalaca.taskamanager.model.entities.Team;
 import com.smalaca.taskamanager.model.enums.ProjectStatus;
 import com.smalaca.taskamanager.repository.ProjectRepository;
 import com.smalaca.taskamanager.repository.TeamRepository;
+import com.smalaca.taskmanager.projectmanagement.business.project.CreateProjectResponse;
 import com.smalaca.taskmanager.projectmanagement.presentation.api.ProjectManagementClient;
 import com.smalaca.taskmanager.projectmanagement.presentation.api.ProjectManagementClientFactory;
 import org.springframework.http.HttpHeaders;
@@ -73,43 +73,19 @@ public class ProjectController {
 
     @PostMapping
     public ResponseEntity<Void> createProject(@RequestBody ProjectDto projectDto, UriComponentsBuilder uriComponentsBuilder) {
-        if (exists(projectDto)) {
+        CreateProjectResponse response = projectManagementClient.createProject(projectDto);
+
+        if (response.isExists()) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
-        } else {
-            return createNewProject(projectDto, uriComponentsBuilder);
         }
-    }
 
-    @VisibleForTesting
-    ResponseEntity<Void> createNewProject(ProjectDto projectDto, UriComponentsBuilder uriComponentsBuilder) {
-        Project project = new Project();
-
-        boolean isValidName = updateIfNameIsValid(projectDto, project);
-
-        if (!isValidName) {
+        if (!response.isValidName()) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        Project saved = projectRepository.save(project);
-
         HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(uriComponentsBuilder.path("/project/{id}").buildAndExpand(saved.getId()).toUri());
+        headers.setLocation(uriComponentsBuilder.path("/project/{id}").buildAndExpand(response.getProjectId()).toUri());
         return new ResponseEntity<>(headers, HttpStatus.CREATED);
-    }
-
-    @VisibleForTesting
-    boolean updateIfNameIsValid(ProjectDto projectDto, Project project) {
-        boolean isValidName = projectDto.getName().length() >= 5;
-
-        if (isValidName) {
-            project.setName(projectDto.getName());
-        }
-
-        return isValidName;
-    }
-
-    private boolean exists(ProjectDto projectDto) {
-        return !projectRepository.findByName(projectDto.getName()).isEmpty();
     }
 
     @PutMapping(value = "/{id}")
