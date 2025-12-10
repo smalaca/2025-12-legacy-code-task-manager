@@ -9,8 +9,6 @@ import com.smalaca.taskamanager.model.entities.Team;
 import com.smalaca.taskamanager.repository.ProjectRepository;
 import com.smalaca.taskamanager.repository.TeamRepository;
 import com.smalaca.taskmanager.projectmanagement.business.project.CreateProjectResponse;
-import com.smalaca.taskmanager.projectmanagement.business.project.ProjectService;
-import com.smalaca.taskmanager.projectmanagement.presentation.api.ProjectManagementClient;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,13 +26,11 @@ public class ProjectController {
     private final ProjectRepository projectRepository;
     private final TeamRepository teamRepository;
     private final AclProjectManagementClient aclProjectManagementClient;
-    private final ProjectManagementClient projectManagementClient;
 
     public ProjectController(ProjectRepository projectRepository, TeamRepository teamRepository) {
         this.projectRepository = projectRepository;
         this.teamRepository = teamRepository;
-        projectManagementClient = new ProjectManagementClient(new ProjectService(projectRepository));
-        aclProjectManagementClient = new AclProjectManagementClient(projectManagementClient);
+        aclProjectManagementClient = AclProjectManagementClient.create(projectRepository);
     }
 
     @GetMapping
@@ -75,7 +71,7 @@ public class ProjectController {
 
     @PostMapping
     public ResponseEntity<Void> createProject(@RequestBody ProjectDto projectDto, UriComponentsBuilder uriComponentsBuilder) {
-        CreateProjectResponse response = projectManagementClient.createProject(projectDto);
+        CreateProjectResponse response = aclProjectManagementClient.createProject(projectDto);
 
         if (response.isExists()) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
@@ -93,7 +89,7 @@ public class ProjectController {
     @PutMapping(value = "/{id}")
     public ResponseEntity<ProjectDto> updateProject(@PathVariable("id") Long id, @RequestBody ProjectDto projectDto) {
         try {
-            ProjectDto response = projectManagementClient.updateProject(id, projectDto);
+            ProjectDto response = aclProjectManagementClient.updateProject(id, projectDto);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (ProjectNotFoundException exception) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
