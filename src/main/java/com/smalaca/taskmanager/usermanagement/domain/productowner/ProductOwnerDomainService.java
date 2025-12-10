@@ -1,6 +1,5 @@
 package com.smalaca.taskmanager.usermanagement.domain.productowner;
 
-import com.smalaca.taskamanager.exception.ProductOwnerNotFoundException;
 import com.smalaca.taskamanager.model.entities.ProductOwner;
 import com.smalaca.taskamanager.model.entities.Project;
 import com.smalaca.taskamanager.repository.ProductOwnerRepository;
