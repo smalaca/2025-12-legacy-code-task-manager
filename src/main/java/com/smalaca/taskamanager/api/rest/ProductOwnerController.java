@@ -32,7 +32,7 @@ public class ProductOwnerController {
         this.productOwnerRepository = productOwnerRepository;
         this.projectRepository = projectRepository;
         aclUserManagementClient = new AclUserManagementClient(
-                new UserManagementClient(productOwnerRepository, new AclProductOwnerDomainRepository(productOwnerRepository)));
+                new UserManagementClient(new AclProductOwnerDomainRepository(productOwnerRepository)));
     }
 
     @GetMapping("/{id}")

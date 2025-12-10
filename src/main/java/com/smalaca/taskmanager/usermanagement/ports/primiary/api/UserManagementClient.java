@@ -1,6 +1,5 @@
 package com.smalaca.taskmanager.usermanagement.ports.primiary.api;
 
-import com.smalaca.taskamanager.repository.ProductOwnerRepository;
 import com.smalaca.taskmanager.usermanagement.domain.productowner.ProductOwnerDomainRepository;
 import com.smalaca.taskmanager.usermanagement.domain.productowner.ProductOwnerDomainService;
 import com.smalaca.taskmanager.usermanagement.domain.productowner.ProductOwnerView;
@@ -8,8 +7,8 @@ import com.smalaca.taskmanager.usermanagement.domain.productowner.ProductOwnerVi
 public class UserManagementClient {
     private final ProductOwnerDomainService productOwnerDomainService;
 
-    public UserManagementClient(ProductOwnerRepository productOwnerRepository, ProductOwnerDomainRepository productOwnerDomainRepository) {
-        productOwnerDomainService = new ProductOwnerDomainService(productOwnerRepository, productOwnerDomainRepository);
+    public UserManagementClient(ProductOwnerDomainRepository productOwnerDomainRepository) {
+        productOwnerDomainService = new ProductOwnerDomainService(productOwnerDomainRepository);
     }
 
     public ProductOwnerView findProductOwnerById(Long id) {

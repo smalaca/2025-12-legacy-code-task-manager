@@ -2,7 +2,7 @@ package com.smalaca.taskmanager.usermanagement.domain.productowner;
 
 import java.util.List;
 
-class ProductOwnerDomainModel {
+public class ProductOwnerDomainModel {
     private final Long id;
     private final String firstName;
     private final String lastName;
@@ -11,7 +11,7 @@ class ProductOwnerDomainModel {
     private final String emailAddress;
     private final List<Long> projectIds;
 
-    ProductOwnerDomainModel(
+    public ProductOwnerDomainModel(
             Long id, String firstName, String lastName, List<Long> projectIds, String phoneNumber, String phonePrefix, String emailAddress) {
         this.id = id;
         this.firstName = firstName;
@@ -22,7 +22,7 @@ class ProductOwnerDomainModel {
         this.emailAddress = emailAddress;
     }
 
-    public ProductOwnerView asView() {
+    ProductOwnerView asView() {
         ProductOwnerView view = new ProductOwnerView();
         view.setId(id);
         view.setFirstName(firstName);
