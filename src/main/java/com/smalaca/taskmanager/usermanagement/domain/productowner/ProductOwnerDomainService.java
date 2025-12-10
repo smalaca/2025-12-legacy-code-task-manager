@@ -1,6 +1,5 @@
 package com.smalaca.taskmanager.usermanagement.domain.productowner;
 
-import com.smalaca.taskamanager.dto.ProductOwnerDto;
 import com.smalaca.taskamanager.exception.ProductOwnerNotFoundException;
 import com.smalaca.taskamanager.model.entities.ProductOwner;
 import com.smalaca.taskamanager.model.entities.Project;
@@ -17,9 +16,9 @@ public class ProductOwnerDomainService {
         this.productOwnerRepository = productOwnerRepository;
     }
 
-    public ProductOwnerDto findById(Long id) {
+    public ProductOwnerView findById(Long id) {
         ProductOwner productOwner = getProductOwnerById(id);
-        ProductOwnerDto dto = new ProductOwnerDto();
+        ProductOwnerView dto = new ProductOwnerView();
         dto.setId(productOwner.getId());
         dto.setFirstName(productOwner.getFirstName());
         dto.setLastName(productOwner.getLastName());

@@ -8,6 +8,7 @@ import com.smalaca.taskamanager.model.entities.ProductOwner;
 import com.smalaca.taskamanager.model.entities.Project;
 import com.smalaca.taskamanager.repository.ProductOwnerRepository;
 import com.smalaca.taskamanager.repository.ProjectRepository;
+import com.smalaca.taskmanager.usermanagement.domain.productowner.ProductOwnerView;
 import com.smalaca.taskmanager.usermanagement.ports.primiary.api.UserManagementClient;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -36,12 +37,25 @@ public class ProductOwnerController {
     @Transactional
     public ResponseEntity<ProductOwnerDto> findById(@PathVariable Long id) {
         try {
-            ProductOwnerDto dto = userManagementClient.findProductOwnerById(id);
+            ProductOwnerView view = userManagementClient.findProductOwnerById(id);
+            ProductOwnerDto dto = asDto(view);
 
             return new ResponseEntity<>(dto, HttpStatus.OK);
         } catch (ProductOwnerNotFoundException exception) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    private ProductOwnerDto asDto(ProductOwnerView view) {
+        ProductOwnerDto productOwnerDto = new ProductOwnerDto();
+        productOwnerDto.setId(view.getId());
+        productOwnerDto.setFirstName(view.getFirstName());
+        productOwnerDto.setLastName(view.getLastName());
+        productOwnerDto.setEmailAddress(view.getEmailAddress());
+        productOwnerDto.setPhonePrefix(view.getPhonePrefix());
+        productOwnerDto.setPhoneNumber(view.getPhoneNumber());
+        productOwnerDto.setProjectIds(view.getProjectIds());
+        return productOwnerDto;
     }
 
     @PostMapping
