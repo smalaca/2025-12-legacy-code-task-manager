@@ -1,7 +1,9 @@
 package com.smalaca.taskmanager.projectmanagement.business.project;
 
 import com.smalaca.taskamanager.dto.ProjectDto;
+import com.smalaca.taskamanager.exception.ProjectNotFoundException;
 import com.smalaca.taskamanager.model.entities.Project;
+import com.smalaca.taskamanager.model.enums.ProjectStatus;
 import com.smalaca.taskamanager.repository.ProjectRepository;
 
 import java.util.ArrayList;
@@ -45,5 +47,26 @@ public class ProjectService {
         }
 
         return response;
+    }
+
+    public ProjectDto updateProject(Long id, ProjectDto projectDto) {
+        Project project = getProjectById(id);
+        project.setProjectStatus(ProjectStatus.valueOf(projectDto.getProjectStatus()));
+
+        Project updated = projectRepository.save(project);
+
+        ProjectDto response = new ProjectDto();
+        response.setId(updated.getId());
+        response.setName(updated.getName());
+        response.setProjectStatus(updated.getProjectStatus().name());
+
+        if (updated.getProductOwner() != null) {
+            response.setProductOwnerId(updated.getProductOwner().getId());
+        }
+        return response;
+    }
+
+    private Project getProjectById(Long id) {
+        return projectRepository.findById(id).orElseThrow(ProjectNotFoundException::new);
     }
 }

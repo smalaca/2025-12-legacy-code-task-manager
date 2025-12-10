@@ -20,4 +20,8 @@ public class ProjectManagementClient {
     public CreateProjectResponse createProject(ProjectDto projectDto) {
         return projectService.createProject(projectDto);
     }
+
+    public ProjectDto updateProject(Long id, ProjectDto projectDto) {
+        return projectService.updateProject(id, projectDto);
+    }
 }

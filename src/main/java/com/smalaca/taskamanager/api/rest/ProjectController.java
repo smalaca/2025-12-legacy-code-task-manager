@@ -5,7 +5,6 @@ import com.smalaca.taskamanager.exception.ProjectNotFoundException;
 import com.smalaca.taskamanager.exception.TeamNotFoundException;
 import com.smalaca.taskamanager.model.entities.Project;
 import com.smalaca.taskamanager.model.entities.Team;
-import com.smalaca.taskamanager.model.enums.ProjectStatus;
 import com.smalaca.taskamanager.repository.ProjectRepository;
 import com.smalaca.taskamanager.repository.TeamRepository;
 import com.smalaca.taskmanager.projectmanagement.business.project.CreateProjectResponse;
@@ -91,20 +90,7 @@ public class ProjectController {
     @PutMapping(value = "/{id}")
     public ResponseEntity<ProjectDto> updateProject(@PathVariable("id") Long id, @RequestBody ProjectDto projectDto) {
         try {
-            Project project = getProjectById(id);
-            project.setProjectStatus(ProjectStatus.valueOf(projectDto.getProjectStatus()));
-
-            Project updated = projectRepository.save(project);
-
-            ProjectDto response = new ProjectDto();
-            response.setId(updated.getId());
-            response.setName(updated.getName());
-            response.setProjectStatus(updated.getProjectStatus().name());
-
-            if (updated.getProductOwner() != null) {
-                response.setProductOwnerId(updated.getProductOwner().getId());
-            }
-
+            ProjectDto response = projectManagementClient.updateProject(id, projectDto);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (ProjectNotFoundException exception) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
