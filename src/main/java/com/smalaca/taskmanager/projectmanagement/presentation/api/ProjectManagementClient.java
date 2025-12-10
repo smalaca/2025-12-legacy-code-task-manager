@@ -10,7 +10,7 @@ import java.util.List;
 public class ProjectManagementClient {
     private final ProjectService projectService;
 
-    ProjectManagementClient(ProjectService projectService) {
+    public ProjectManagementClient(ProjectService projectService) {
         this.projectService = projectService;
     }
 

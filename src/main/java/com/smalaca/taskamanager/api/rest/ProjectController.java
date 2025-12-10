@@ -1,5 +1,6 @@
 package com.smalaca.taskamanager.api.rest;
 
+import com.smalaca.acl.legacycode.AclProjectManagementClient;
 import com.smalaca.taskamanager.dto.ProjectDto;
 import com.smalaca.taskamanager.exception.ProjectNotFoundException;
 import com.smalaca.taskamanager.exception.TeamNotFoundException;
@@ -8,9 +9,8 @@ import com.smalaca.taskamanager.model.entities.Team;
 import com.smalaca.taskamanager.repository.ProjectRepository;
 import com.smalaca.taskamanager.repository.TeamRepository;
 import com.smalaca.taskmanager.projectmanagement.business.project.CreateProjectResponse;
-import com.smalaca.taskmanager.projectmanagement.business.project.ProjectView;
+import com.smalaca.taskmanager.projectmanagement.business.project.ProjectService;
 import com.smalaca.taskmanager.projectmanagement.presentation.api.ProjectManagementClient;
-import com.smalaca.taskmanager.projectmanagement.presentation.api.ProjectManagementClientFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,36 +27,21 @@ import java.util.stream.Collectors;
 public class ProjectController {
     private final ProjectRepository projectRepository;
     private final TeamRepository teamRepository;
+    private final AclProjectManagementClient aclProjectManagementClient;
     private final ProjectManagementClient projectManagementClient;
 
     public ProjectController(ProjectRepository projectRepository, TeamRepository teamRepository) {
         this.projectRepository = projectRepository;
         this.teamRepository = teamRepository;
-        projectManagementClient = new ProjectManagementClientFactory().create(projectRepository);
+        projectManagementClient = new ProjectManagementClient(new ProjectService(projectRepository));
+        aclProjectManagementClient = new AclProjectManagementClient(projectManagementClient);
     }
 
     @GetMapping
     public ResponseEntity<List<ProjectDto>> getAllProjects() {
-        List<ProjectView> projectsViews = projectManagementClient.findAllProjects();
-        List<ProjectDto> projectsDtos = asDtos(projectsViews);
+        List<ProjectDto> projectsDtos = aclProjectManagementClient.findAllProjects();
 
         return new ResponseEntity<>(projectsDtos, HttpStatus.OK);
-    }
-
-    private List<ProjectDto> asDtos(List<ProjectView> projectsViews) {
-        return projectsViews.stream()
-                .map(projectView -> asDto(projectView))
-                .collect(Collectors.toList());
-    }
-
-    private ProjectDto asDto(ProjectView projectView) {
-        ProjectDto projectDto = new ProjectDto();
-        projectDto.setId(projectView.getId());
-        projectDto.setName(projectView.getName());
-        projectDto.setProjectStatus(projectView.getProjectStatus());
-        projectDto.setProductOwnerId(projectView.getProductOwnerId());
-        projectDto.setTeamIds(projectView.getTeamIds());
-        return projectDto;
     }
 
     @GetMapping(value = "/{id}")
