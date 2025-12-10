@@ -1,12 +1,9 @@
 package com.smalaca.taskmanager.usermanagement.domain.productowner;
 
 import com.smalaca.taskamanager.model.entities.ProductOwner;
-import com.smalaca.taskamanager.model.entities.Project;
 import com.smalaca.taskamanager.repository.ProductOwnerRepository;
 
 import java.util.Optional;
-
-import static java.util.stream.Collectors.toList;
 
 public class ProductOwnerDomainService {
     private final ProductOwnerRepository productOwnerRepository;
@@ -16,23 +13,10 @@ public class ProductOwnerDomainService {
     }
 
     public ProductOwnerView findById(Long id) {
-        ProductOwner productOwner = getProductOwnerById(id);
-        ProductOwnerView dto = new ProductOwnerView();
-        dto.setId(productOwner.getId());
-        dto.setFirstName(productOwner.getFirstName());
-        dto.setLastName(productOwner.getLastName());
+        ProductOwner legacy = getProductOwnerById(id);
+        ProductOwnerDomainModel productOwner = new ProductOwnerDomainModel(legacy);
 
-        if (productOwner.getPhoneNumber() != null) {
-            dto.setPhonePrefix(productOwner.getPhoneNumber().getPrefix());
-            dto.setPhoneNumber(productOwner.getPhoneNumber().getNumber());
-        }
-
-        if (productOwner.getEmailAddress() != null) {
-            dto.setEmailAddress(productOwner.getEmailAddress().getEmailAddress());
-        }
-
-        dto.setProjectIds(productOwner.getProjects().stream().map(Project::getId).collect(toList()));
-        return dto;
+        return productOwner.asView();
     }
 
     private ProductOwner getProductOwnerById(Long id) {
