@@ -8,6 +8,7 @@ import com.smalaca.taskamanager.model.entities.Team;
 import com.smalaca.taskamanager.repository.ProjectRepository;
 import com.smalaca.taskamanager.repository.TeamRepository;
 import com.smalaca.taskmanager.projectmanagement.business.project.CreateProjectResponse;
+import com.smalaca.taskmanager.projectmanagement.business.project.ProjectView;
 import com.smalaca.taskmanager.projectmanagement.presentation.api.ProjectManagementClient;
 import com.smalaca.taskmanager.projectmanagement.presentation.api.ProjectManagementClientFactory;
 import org.springframework.http.HttpHeaders;
@@ -36,9 +37,26 @@ public class ProjectController {
 
     @GetMapping
     public ResponseEntity<List<ProjectDto>> getAllProjects() {
-        List<ProjectDto> projectsDtos = projectManagementClient.findAllProjects();
+        List<ProjectView> projectsViews = projectManagementClient.findAllProjects();
+        List<ProjectDto> projectsDtos = asDtos(projectsViews);
 
         return new ResponseEntity<>(projectsDtos, HttpStatus.OK);
+    }
+
+    private List<ProjectDto> asDtos(List<ProjectView> projectsViews) {
+        return projectsViews.stream()
+                .map(projectView -> asDto(projectView))
+                .collect(Collectors.toList());
+    }
+
+    private ProjectDto asDto(ProjectView projectView) {
+        ProjectDto projectDto = new ProjectDto();
+        projectDto.setId(projectView.getId());
+        projectDto.setName(projectView.getName());
+        projectDto.setProjectStatus(projectView.getProjectStatus());
+        projectDto.setProductOwnerId(projectView.getProductOwnerId());
+        projectDto.setTeamIds(projectView.getTeamIds());
+        return projectDto;
     }
 
     @GetMapping(value = "/{id}")

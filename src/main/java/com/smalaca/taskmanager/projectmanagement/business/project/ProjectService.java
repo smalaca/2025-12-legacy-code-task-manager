@@ -16,13 +16,23 @@ public class ProjectService {
         this.projectRepository = projectRepository;
     }
 
-    public List<ProjectDto> findAll() {
-        List<ProjectDto> projectsDtos = new ArrayList<>();
+    public List<ProjectView> findAll() {
+        List<ProjectView> projectsDtos = new ArrayList<>();
 
         projectRepository.findAll()
-                .forEach(project -> projectsDtos.add(project.asDto()));
+                .forEach(project -> projectsDtos.add(asView(project.asDto())));
 
         return projectsDtos;
+    }
+
+    private ProjectView asView(ProjectDto dto) {
+        ProjectView projectView = new ProjectView();
+        projectView.setId(dto.getId());
+        projectView.setName(dto.getName());
+        projectView.setProjectStatus(dto.getProjectStatus());
+        projectView.setProductOwnerId(dto.getProductOwnerId());
+        projectView.setTeamIds(dto.getTeamIds());
+        return projectView;
     }
 
     public CreateProjectResponse createProject(ProjectDto projectDto) {
