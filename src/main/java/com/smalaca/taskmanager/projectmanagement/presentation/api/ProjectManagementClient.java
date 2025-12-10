@@ -1,10 +1,6 @@
 package com.smalaca.taskmanager.projectmanagement.presentation.api;
 
-import com.smalaca.taskamanager.dto.ProjectDto;
-import com.smalaca.taskmanager.projectmanagement.business.project.CreateProjectResponse;
-import com.smalaca.taskmanager.projectmanagement.business.project.ProjectService;
-import com.smalaca.taskmanager.projectmanagement.business.project.ProjectView;
-import com.smalaca.taskmanager.projectmanagement.business.project.UpdateProjectCommand;
+import com.smalaca.taskmanager.projectmanagement.business.project.*;
 
 import java.util.List;
 
@@ -19,8 +15,8 @@ public class ProjectManagementClient {
         return projectService.findAll();
     }
 
-    public CreateProjectResponse createProject(ProjectDto projectDto) {
-        return projectService.createProject(projectDto);
+    public CreateProjectResponse createProject(CreateProjectCommand command) {
+        return projectService.createProject(command);
     }
 
     public ProjectView updateProject(UpdateProjectCommand command) {

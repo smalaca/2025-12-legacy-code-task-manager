@@ -2,10 +2,7 @@ package com.smalaca.acl.legacycode;
 
 import com.smalaca.taskamanager.dto.ProjectDto;
 import com.smalaca.taskamanager.repository.ProjectRepository;
-import com.smalaca.taskmanager.projectmanagement.business.project.CreateProjectResponse;
-import com.smalaca.taskmanager.projectmanagement.business.project.ProjectService;
-import com.smalaca.taskmanager.projectmanagement.business.project.ProjectView;
-import com.smalaca.taskmanager.projectmanagement.business.project.UpdateProjectCommand;
+import com.smalaca.taskmanager.projectmanagement.business.project.*;
 import com.smalaca.taskmanager.projectmanagement.presentation.api.ProjectManagementClient;
 
 import java.util.List;
@@ -35,7 +32,8 @@ public class AclProjectManagementClient {
     }
 
     public CreateProjectResponse createProject(ProjectDto projectDto) {
-        return projectManagementClient.createProject(projectDto);
+        CreateProjectCommand command = new CreateProjectCommand(projectDto.getName());
+        return projectManagementClient.createProject(command);
     }
 
     public ProjectDto updateProject(Long id, ProjectDto projectDto) {

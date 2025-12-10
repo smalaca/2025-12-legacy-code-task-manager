@@ -25,20 +25,20 @@ public class ProjectService {
         return projectsDtos;
     }
 
-    public CreateProjectResponse createProject(ProjectDto projectDto) {
-        boolean exists = projectRepository.findByName(projectDto.getName()).isPresent();
+    public CreateProjectResponse createProject(CreateProjectCommand command) {
+        boolean exists = projectRepository.findByName(command.getName()).isPresent();
         CreateProjectResponse response = new CreateProjectResponse();
         response.setExists(exists);
 
         if (!response.isExists()) {
             Project project = new Project();
 
-            boolean isValidName = projectDto.getName().length() >= 5;
+            boolean isValidName = command.getName().length() >= 5;
             response.setValidName(isValidName);
 
 
             if (response.isValidName()) {
-                project.setName(projectDto.getName());
+                project.setName(command.getName());
 
                 Project saved = projectRepository.save(project);
 
