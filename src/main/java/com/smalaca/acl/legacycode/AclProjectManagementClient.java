@@ -5,6 +5,7 @@ import com.smalaca.taskamanager.repository.ProjectRepository;
 import com.smalaca.taskmanager.projectmanagement.business.project.CreateProjectResponse;
 import com.smalaca.taskmanager.projectmanagement.business.project.ProjectService;
 import com.smalaca.taskmanager.projectmanagement.business.project.ProjectView;
+import com.smalaca.taskmanager.projectmanagement.business.project.UpdateProjectCommand;
 import com.smalaca.taskmanager.projectmanagement.presentation.api.ProjectManagementClient;
 
 import java.util.List;
@@ -38,7 +39,8 @@ public class AclProjectManagementClient {
     }
 
     public ProjectDto updateProject(Long id, ProjectDto projectDto) {
-        return asDto(projectManagementClient.updateProject(id, projectDto));
+        UpdateProjectCommand command = new UpdateProjectCommand(id, projectDto.getProjectStatus());
+        return asDto(projectManagementClient.updateProject(command));
     }
 
     private ProjectDto asDto(ProjectView projectView) {

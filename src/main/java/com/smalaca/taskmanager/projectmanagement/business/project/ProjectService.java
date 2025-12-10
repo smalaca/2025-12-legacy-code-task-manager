@@ -49,9 +49,9 @@ public class ProjectService {
         return response;
     }
 
-    public ProjectView updateProject(Long id, ProjectDto projectDto) {
-        Project project = getProjectById(id);
-        project.setProjectStatus(ProjectStatus.valueOf(projectDto.getProjectStatus()));
+    public ProjectView updateProject(UpdateProjectCommand command) {
+        Project project = getProjectById(command.getId());
+        project.setProjectStatus(ProjectStatus.valueOf(command.getProjectStatus()));
 
         Project updated = projectRepository.save(project);
 

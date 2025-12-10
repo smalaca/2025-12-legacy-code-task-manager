@@ -4,6 +4,7 @@ import com.smalaca.taskamanager.dto.ProjectDto;
 import com.smalaca.taskmanager.projectmanagement.business.project.CreateProjectResponse;
 import com.smalaca.taskmanager.projectmanagement.business.project.ProjectService;
 import com.smalaca.taskmanager.projectmanagement.business.project.ProjectView;
+import com.smalaca.taskmanager.projectmanagement.business.project.UpdateProjectCommand;
 
 import java.util.List;
 
@@ -22,7 +23,7 @@ public class ProjectManagementClient {
         return projectService.createProject(projectDto);
     }
 
-    public ProjectView updateProject(Long id, ProjectDto projectDto) {
-        return projectService.updateProject(id, projectDto);
+    public ProjectView updateProject(UpdateProjectCommand command) {
+        return projectService.updateProject(command);
     }
 }
