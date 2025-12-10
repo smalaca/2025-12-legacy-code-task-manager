@@ -14,23 +14,21 @@ class ProductOwnerDomainModel {
     private String phoneNumber;
     private String emailAddress;
     private final List<Long> projectIds;
-    private final boolean hasPhoneNumber;
-    private final boolean hasEmailAddress;
 
     ProductOwnerDomainModel(ProductOwner productOwner) {
         id = productOwner.getId();
         firstName = productOwner.getFirstName();
         lastName = productOwner.getLastName();
-        hasPhoneNumber = productOwner.getPhoneNumber() != null;
-        if (hasPhoneNumber) {
+
+        if (productOwner.getPhoneNumber() != null) {
             phonePrefix = productOwner.getPhoneNumber().getPrefix();
             phoneNumber = productOwner.getPhoneNumber().getNumber();
         }
-        hasEmailAddress = productOwner.getEmailAddress() != null;
 
-        if (hasEmailAddress) {
+        if (productOwner.getEmailAddress() != null) {
             emailAddress = productOwner.getEmailAddress().getEmailAddress();
         }
+
         projectIds = productOwner.getProjects().stream().map(Project::getId).collect(Collectors.toList());
     }
 
@@ -40,12 +38,12 @@ class ProductOwnerDomainModel {
         view.setFirstName(firstName);
         view.setLastName(lastName);
 
-        if (hasPhoneNumber) {
+        if (hasPhoneNumber()) {
             view.setPhonePrefix(phonePrefix);
             view.setPhoneNumber(phoneNumber);
         }
 
-        if (hasEmailAddress) {
+        if (hasEmailAddress()) {
             view.setEmailAddress(emailAddress);
         }
 
@@ -53,5 +51,13 @@ class ProductOwnerDomainModel {
 
         return view;
 
+    }
+
+    private boolean hasEmailAddress() {
+        return emailAddress != null;
+    }
+
+    private boolean hasPhoneNumber() {
+        return phoneNumber != null;
     }
 }
